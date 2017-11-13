@@ -10,7 +10,7 @@ from wg.albums.models import UserAlbum
 from wg.albums.serializers import (AlbumSerializer,
                                    AlbumCreateSerializer,
                                    AlbumEditSerializer)
-from wg.utils.permissions import IsOwnerOrReadOnly
+from wg.utils.permissions import IsUser, IsOwnerOrReadOnly
 
 
 class AlbumList(GenericAPIView):
@@ -48,11 +48,11 @@ class AlbumDetail(RetrieveUpdateDestroyAPIView):
             return AlbumSerializer
         return AlbumEditSerializer
 
-
-        # def get(self, request, pk):
-        #     album = get_object_or_404(UserAlbum, pk=pk)
-        #     return Response(AlbumSerializer(album,
-        #                                     context={'request': request}).data)
-        #
-        # def patch(self, request, pk):
-        #     album = get_object_or_404(UserAlbum, pk=pk)
+    def put(self, request, *args, **kwargs):
+        try:
+            response = self.update(request, *args, **kwargs)
+            return response
+        except IntegrityError:
+            return Response({
+                'Error': _(f'Album "{request.data.get("name")}" already exist')
+            })

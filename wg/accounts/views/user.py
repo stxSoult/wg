@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import SAFE_METHODS
 from django.shortcuts import get_object_or_404
 # ==
-from wg.utils.permissions import IsOwnerOrReadOnly
+from wg.utils.permissions import IsUser
 from wg.accounts.models import User
 from wg.accounts.serializers import (UserSerializer,
                                      UserCreateSerializer,
@@ -32,7 +32,7 @@ class UserList(ListCreateAPIView):
 
 
 class UserDetail(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (IsUser,)
     queryset = User.objects.all().order_by('-date_joined')
 
     def get_serializer_class(self):
