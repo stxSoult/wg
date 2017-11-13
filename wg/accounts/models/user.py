@@ -1,11 +1,13 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.mail import send_mail
 from django.db import models
-from wg.accounts.managers.user import UserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 from rest_framework.authtoken.models import Token
+
+from wg.accounts.managers.user import UserManager
+from wg.accounts.models import Profile
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -35,6 +37,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_profile(instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    instance.profile.save()
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

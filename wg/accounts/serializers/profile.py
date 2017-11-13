@@ -4,9 +4,11 @@ from wg.accounts.models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    birthday = serializers.DateField(required=False)
+
     class Meta:
         model = Profile
-        fields = ('user', 'picture', 'country')
+        fields = ('user', 'country', 'city', 'gender', 'birthday')
 
     def __init__(self, exclude=None, **kwargs):
         super().__init__(**kwargs)

@@ -1,21 +1,25 @@
 from django.db import models
 from django.conf import settings
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.utils.translation import ugettext as _
+
+GENDERS = (
+    (None, 'Gender'),
+    ('f', _('Female')),
+    ('m', _('Male'))
+)
 
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE,
                                 related_name='profile')
-    picture = models.ImageField(upload_to='pictures/profile',
-                                blank=True, null=True)
 
-    country = models.CharField(max_length=100)
+    country = models.CharField(max_length=100, blank=True)
+    city = models.CharField(max_length=150, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDERS,
+                              blank=True, null=True)
+    birthday = models.DateField(blank=True, null=True)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_profile(instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-    instance.profile.save()

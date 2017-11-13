@@ -1,0 +1,1 @@
+from wg.albums.views.album import AlbumList, AlbumDetail

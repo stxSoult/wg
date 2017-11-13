@@ -12,6 +12,7 @@ INSTALLED_APPS = [
     # CUSTOM
     'wg.accounts.apps.AccountsConfig',
     'wg.utils.apps.UtilsConfig',
+    'wg.albums.apps.AlbumsConfig',
     # DJANGO
     'django.contrib.admin',
     'django.contrib.auth',
