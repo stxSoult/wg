@@ -1,9 +1,7 @@
-from django.db import models
 from django.conf import settings
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.db import models
 
-from wg.shortcuts.models import DateModel
+from wg.models import DateModel
 
 
 class UserAlbum(DateModel):
@@ -12,7 +10,10 @@ class UserAlbum(DateModel):
                              on_delete=models.CASCADE,
                              related_name='pictures')
     pictures = models.ManyToManyField('Picture',
-                                      related_name='album')
+                                      related_name='albums')
 
     class Meta:
         unique_together = ('name', 'user')
+
+    def __str__(self):
+        return self.name

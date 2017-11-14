@@ -1,15 +1,17 @@
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.generics import (ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView)
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.permissions import SAFE_METHODS
-from django.shortcuts import get_object_or_404
-# ==
-from wg.utils.permissions import IsUser
+from rest_framework.response import Response
+
 from wg.accounts.models import User
 from wg.accounts.serializers import (UserSerializer,
                                      UserCreateSerializer,
                                      UserEditSerializer)
+# ==
+from wg.permissions import IsUser
+from wg.shortcuts import get_user
 
 
 class UserList(ListCreateAPIView):
@@ -33,7 +35,9 @@ class UserList(ListCreateAPIView):
 
 class UserDetail(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsUser,)
-    queryset = User.objects.all().order_by('-date_joined')
+
+    def get_object(self):
+        return get_user(**self.kwargs)
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:

@@ -1,7 +1,9 @@
 from django.db import models
-from django.conf import settings
+
+from wg.models import DateModel
 
 
-class Picture(models.Model):
-    name = models.CharField(max_length=250, blank=True)
+class Picture(DateModel):
+    comment = models.CharField(max_length=2000, blank=True)
     image = models.ImageField(upload_to='pictures/')
+

@@ -4,3 +4,5 @@ from .user import (UserCreateSerializer,
                    UserLoginSerializer,
                    UserEditSerializer,
                    user_detail)
+
+from .password_reset import PasswordResetSerializer

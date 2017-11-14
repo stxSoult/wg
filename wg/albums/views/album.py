@@ -1,20 +1,21 @@
-from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, SAFE_METHODS
 from django.db import IntegrityError
-from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+from rest_framework import status
+from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import SAFE_METHODS
+from rest_framework.response import Response
 # ==
 from wg.albums.models import UserAlbum
 from wg.albums.serializers import (AlbumSerializer,
                                    AlbumCreateSerializer,
                                    AlbumEditSerializer)
-from wg.utils.permissions import IsUser, IsOwnerOrReadOnly
+from wg.permissions import IsOwnerOrReadOnly
+from wg.albums.serializers import PictureSerializer
 
 
 class AlbumList(GenericAPIView):
-    queryset = UserAlbum.objects.all()
+    def get_queryset(self):
+        return UserAlbum.objects.filter(user=self.kwargs.get('user'))
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -23,6 +24,7 @@ class AlbumList(GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         context = {'request': request}
+
         return Response(
             AlbumSerializer(self.get_queryset(),
                             many=True,
@@ -42,6 +44,7 @@ class AlbumList(GenericAPIView):
 class AlbumDetail(RetrieveUpdateDestroyAPIView):
     queryset = UserAlbum.objects.all()
     permission_classes = (IsOwnerOrReadOnly,)
+    serializer_class = AlbumEditSerializer
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:

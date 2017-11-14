@@ -2,44 +2,45 @@ from rest_framework import serializers
 from wg.accounts.models import User
 from rest_framework.authtoken.models import Token
 from wg.accounts.serializers import ProfileSerializer
+from wg.albums.serializers import PictureSerializer
 
 user_detail = serializers.HyperlinkedIdentityField(
     view_name='accounts:user-detail',
-    lookup_field='pk'
+    lookup_field='pk',
+
 )
 
 
 class UserSerializer(serializers.ModelSerializer):
-    url = user_detail
     profile = ProfileSerializer(exclude=['user'])
-
     class Meta:
         model = User
-        fields = ('url', 'id', 'is_active', 'date_joined', 'email',
-                  'first_name', 'last_name', 'profile')
+        fields = ('id', 'username', 'is_active', 'date_joined',
+                  'email', 'first_name', 'last_name', 'profile',)
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-    url = user_detail
+
     password = serializers.CharField(style={'input_type': 'password'})
 
     class Meta:
         model = User
-        fields = ('url', 'email', 'first_name', 'last_name', 'password')
+        fields = ('email', 'first_name', 'last_name', 'password')
 
 
 class UserEditSerializer(serializers.ModelSerializer):
-    url = user_detail
+
     profile = ProfileSerializer()
 
     class Meta:
         model = User
-        fields = ('url', 'id', 'first_name', 'last_name',
+        fields = ('id', 'username', 'first_name', 'last_name',
                   'profile')
 
     def update(self, instance, validated_data):
         profile_data = validated_data.get('profile', {})
 
+        instance.username = validated_data.get('username', instance.username)
         instance.first_name = validated_data.get('first_name',
                                                  instance.first_name)
         instance.last_name = validated_data.get('last_name',
