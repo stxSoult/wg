@@ -2,7 +2,7 @@ certifi==2017.11.5
 chardet==3.0.4
 Django==1.11.7
 djangorestframework==3.7.3
-httpie==0.9.9
+httpie==1.0.3
 idna==2.6
 olefile==0.44
 Pillow==4.3.0
